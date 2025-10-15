@@ -124,4 +124,8 @@ if api_key:
                 else:
                     st.warning("Lütfen bir soru girin.")
 else:
+<<<<<<< HEAD
     st.sidebar.warning("Lütfen başlamak için API anahtarınızı girin.")
+=======
+    st.sidebar.warning("Lütfen başlamak için API anahtarınızı girin.")
+>>>>>>> 9cd3913d0fe38853ec8676aaf64f90e88d4cf333
