@@ -3,8 +3,4 @@ pandas
 faiss-cpu
 langchain
 langchain-google-genai
-<<<<<<< HEAD
-google-genai
-=======
-google-genai
->>>>>>> 9cd3913d0fe38853ec8676aaf64f90e88d4cf333
+google-gen-ai
