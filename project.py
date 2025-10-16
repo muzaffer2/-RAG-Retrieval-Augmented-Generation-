@@ -61,7 +61,7 @@ def get_conversational_chain(api_key):
     Cevap:
     """
     model = ChatGoogleGenerativeAI(
-        model="gemini-pro", 
+        model="gemini-1.5-flash", 
         temperature=0.3,
         google_api_key=api_key
     )
