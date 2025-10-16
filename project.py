@@ -24,7 +24,6 @@
 
 import streamlit as st
 import pandas as pd
-import google.genai as genai
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
 from langchain_community.vectorstores import FAISS
 from langchain.chains.question_answering import load_qa_chain
