@@ -1,10 +1,8 @@
 import streamlit as st
 import pandas as pd
-from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain.chains.question_answering import load_qa_chain
-from langchain.prompts import PromptTemplate
+import google.generativeai as genai
 import os
 
 # --- Veri İşleme Fonksiyonu ---
@@ -36,9 +34,6 @@ def preprocess_nba_data(file_path):
 @st.cache_resource
 def create_vector_store(documents):
     try:
-        # Ücretsiz lokal embedding kullan (Gemini quota sorunu yok)
-        from langchain_community.embeddings import HuggingFaceEmbeddings
-        
         embeddings = HuggingFaceEmbeddings(
             model_name="sentence-transformers/all-MiniLM-L6-v2",
             model_kwargs={'device': 'cpu'},
@@ -50,24 +45,28 @@ def create_vector_store(documents):
         st.error(f"Vektör veritabanı oluşturulurken hata oluştu: {e}")
         return None
 
-# --- Gemini ve LangChain ile Cevap Üretme ---
-def get_conversational_chain(api_key):
-    prompt_template = """
-    Sana verilen bağlamı kullanarak soruyu olabildiğince detaylı bir şekilde Türkçe yanıtla. 
-    Eğer cevabı bağlamda bulamazsan, "Üzgünüm, bu bilgiye sahip değilim." de. Kendi bilgini kullanma.\n\n
-    Bağlam:\n {context}?\n
-    Soru: \n{question}\n
+# --- Direkt Gemini API ile Cevap Üretme ---
+def get_answer(context, question, api_key):
+    try:
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel('gemini-pro')
+        
+        prompt = f"""
+        Sana verilen bağlamı kullanarak soruyu olabildiğince detaylı bir şekilde Türkçe yanıtla. 
+        Eğer cevabı bağlamda bulamazsan, "Üzgünüm, bu bilgiye sahip değilim." de. Kendi bilgini kullanma.
 
-    Cevap:
-    """
-    model = ChatGoogleGenerativeAI(
-        model="gemini-1.5-flash", 
-        temperature=0.3,
-        google_api_key=api_key
-    )
-    prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
-    chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
-    return chain
+        Bağlam:
+        {context}
+
+        Soru: {question}
+
+        Cevap:
+        """
+        
+        response = model.generate_content(prompt)
+        return response.text
+    except Exception as e:
+        return f"Hata: {str(e)}"
 
 # --- Streamlit Arayüzü ---
 st.set_page_config(page_title="🏀 NBA Fantezi Asistanı", layout="wide")
@@ -99,14 +98,15 @@ if api_key:
                         try:
                             # Soruyu yanıtlama
                             docs = vector_store.similarity_search(user_question, k=3)
-                            chain = get_conversational_chain(api_key)
-                            response = chain(
-                                {"input_documents": docs, "question": user_question}, 
-                                return_only_outputs=True
-                            )
+                            
+                            # Bağlamı oluştur
+                            context = "\n\n".join([doc.page_content for doc in docs])
+                            
+                            # Cevap al
+                            answer = get_answer(context, user_question, api_key)
                             
                             st.write("### 💬 Cevap:")
-                            st.write(response["output_text"])
+                            st.write(answer)
                             
                             # Kaynak göster
                             with st.expander("📚 Kullanılan Kaynaklar"):
