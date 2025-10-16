@@ -2,5 +2,6 @@ streamlit
 pandas
 faiss-cpu
 langchain
+langchain-community==0.3.23
 langchain-google-genai
-google-genai
+google-genai==0.8.3 
