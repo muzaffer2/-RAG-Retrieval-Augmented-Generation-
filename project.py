@@ -28,10 +28,9 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGener
 from langchain_community.vectorstores import FAISS
 from langchain.chains.question_answering import load_qa_chain
 from langchain.prompts import PromptTemplate
-
 import os
 
-# --- Veri İşleme Fonksiyonu (Önceki adımdan) ---
+# --- Veri İşleme Fonksiyonu ---
 def preprocess_nba_data(file_path):
     try:
         df = pd.read_csv(file_path, delimiter=';')
@@ -53,16 +52,17 @@ def preprocess_nba_data(file_path):
                    f"Saha içi isabet oranı %{float(row['FG%'])*100:.1f} idi."
             documents.append(text)
         except (ValueError, KeyError, TypeError) as e:
-            # Hatalı satırları atla ve bilgi ver
-            # st.warning(f"Veri setindeki {index+1}. satır işlenirken bir hata oluştu ve atlandı: {e}")
             continue
     return df, documents
 
 # --- LangChain ve FAISS ile Vektör Veritabanı Oluşturma ---
-# @st.cache_resource
-def create_vector_store(documents, api_key):
+@st.cache_resource
+def create_vector_store(documents, _api_key):
     try:
-        embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=api_key)
+        embeddings = GoogleGenerativeAIEmbeddings(
+            model="models/embedding-001", 
+            google_api_key=_api_key
+        )
         vector_store = FAISS.from_texts(documents, embedding=embeddings)
         return vector_store
     except Exception as e:
@@ -70,7 +70,7 @@ def create_vector_store(documents, api_key):
         return None
 
 # --- Gemini ve LangChain ile Cevap Üretme ---
-def get_conversational_chain():
+def get_conversational_chain(api_key):
     prompt_template = """
     Sana verilen bağlamı kullanarak soruyu olabildiğince detaylı bir şekilde Türkçe yanıtla. 
     Eğer cevabı bağlamda bulamazsan, "Üzgünüm, bu bilgiye sahip değilim." de. Kendi bilgini kullanma.\n\n
@@ -79,7 +79,11 @@ def get_conversational_chain():
 
     Cevap:
     """
-    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.3)
+    model = ChatGoogleGenerativeAI(
+        model="gemini-pro", 
+        temperature=0.3,
+        google_api_key=api_key
+    )
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
     return chain
@@ -93,35 +97,50 @@ st.write("Oyuncu istatistikleri hakkında sorularınızı sorun!")
 api_key = st.sidebar.text_input("Google API Anahtarınızı Girin:", type="password")
 
 if api_key:
-    # API anahtarını yapılandır
-    try:
-        genai.configure(api_key=api_key)
-    except Exception as e:
-        st.error(f"API anahtarı yapılandırılırken bir hata oluştu: {e}")
-
     # Veriyi yükle ve işle
     FILE_PATH = 'nba_fantasy_dataset.csv'
     df, documents = preprocess_nba_data(FILE_PATH)
 
     if documents:
         # Vektör veritabanını oluştur
-        vector_store = create_vector_store(documents, api_key)
+        with st.spinner("Vektör veritabanı oluşturuluyor..."):
+            vector_store = create_vector_store(documents, api_key)
         
         if vector_store:
+            st.success("✅ Sistem hazır! Sorularınızı sorabilirsiniz.")
+            
             # Kullanıcıdan soru al
-            user_question = st.text_input("Örnek: 'Jayson Tatum en son maçında kaç sayı attı?'")
+            user_question = st.text_input("Sorunuzu yazın:", placeholder="Örnek: 'Jayson Tatum en son maçında kaç sayı attı?'")
 
-            if st.button("Soru Sor"):
+            if st.button("🔍 Soru Sor"):
                 if user_question:
                     with st.spinner("Cevap aranıyor..."):
-                        # Soruyu yanıtlama
-                        docs = vector_store.similarity_search(user_question)
-                        chain = get_conversational_chain()
-                        response = chain({"input_documents": docs, "question": user_question}, return_only_outputs=True)
-                        
-                        st.write("### Cevap:")
-                        st.write(response["output_text"])
+                        try:
+                            # Soruyu yanıtlama
+                            docs = vector_store.similarity_search(user_question, k=3)
+                            chain = get_conversational_chain(api_key)
+                            response = chain(
+                                {"input_documents": docs, "question": user_question}, 
+                                return_only_outputs=True
+                            )
+                            
+                            st.write("### 💬 Cevap:")
+                            st.write(response["output_text"])
+                            
+                            # Kaynak göster
+                            with st.expander("📚 Kullanılan Kaynaklar"):
+                                for i, doc in enumerate(docs, 1):
+                                    st.write(f"**Kaynak {i}:**")
+                                    st.write(doc.page_content)
+                                    st.divider()
+                        except Exception as e:
+                            st.error(f"Cevap üretilirken hata oluştu: {e}")
                 else:
-                    st.warning("Lütfen bir soru girin.")
+                    st.warning("⚠️ Lütfen bir soru girin.")
+        else:
+            st.error("Vektör veritabanı oluşturulamadı.")
+    else:
+        st.error("Veri dosyası yüklenemedi veya işlenemedi.")
 else:
-    st.sidebar.warning("Lütfen başlamak için API anahtarınızı girin.")
+    st.sidebar.warning("⚠️ Lütfen başlamak için Google API anahtarınızı girin.")
+    st.info("👈 Sol taraftaki alana API anahtarınızı girin.")
