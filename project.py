@@ -1,31 +1,8 @@
-# import torch
-# print(torch.__version__)
-# # 1. CUDA (GPU) kullanılabilirliğini kontrol et
-# gpu_kullanilabilir = torch.cuda.is_available()
-# print(f"CUDA (GPU) Kullanılabilir: {gpu_kullanilabilir}")
-
-# if gpu_kullanilabilir:
-#     # 2. Kullanılan GPU sayısını ve adını al
-#     gpu_sayisi = torch.cuda.device_count()
-#     gpu_adi = torch.cuda.get_device_name(0) # İlk GPU'nun adını alır
-#     print(f"Kullanılan GPU Sayısı: {gpu_sayisi}")
-#     print(f"GPU Adı: {gpu_adi}")
-
-#     # 3. Basit bir tensör işlemini GPU'ya taşıyarak test et
-#     try:
-#         x = torch.rand(5, 5).cuda()
-#         y = torch.rand(5, 5).cuda()
-#         z = x + y
-#         print("GPU'da basit tensör işlemi başarılı.")
-#     except Exception as e:
-#         print(f"GPU işlemi başarısız: {e}")
-# else:
-#     print("GPU kullanılamıyor, işlem CPU'da yürütülecektir.")
-
 import streamlit as st
 import pandas as pd
-from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_community.vectorstores import FAISS
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.chains.question_answering import load_qa_chain
 from langchain.prompts import PromptTemplate
 import os
@@ -57,11 +34,15 @@ def preprocess_nba_data(file_path):
 
 # --- LangChain ve FAISS ile Vektör Veritabanı Oluşturma ---
 @st.cache_resource
-def create_vector_store(documents, _api_key):
+def create_vector_store(documents):
     try:
-        embeddings = GoogleGenerativeAIEmbeddings(
-            model="models/embedding-001", 
-            google_api_key=_api_key
+        # Ücretsiz lokal embedding kullan (Gemini quota sorunu yok)
+        from langchain_community.embeddings import HuggingFaceEmbeddings
+        
+        embeddings = HuggingFaceEmbeddings(
+            model_name="sentence-transformers/all-MiniLM-L6-v2",
+            model_kwargs={'device': 'cpu'},
+            encode_kwargs={'normalize_embeddings': True}
         )
         vector_store = FAISS.from_texts(documents, embedding=embeddings)
         return vector_store
@@ -103,8 +84,8 @@ if api_key:
 
     if documents:
         # Vektör veritabanını oluştur
-        with st.spinner("Vektör veritabanı oluşturuluyor..."):
-            vector_store = create_vector_store(documents, api_key)
+        with st.spinner("Vektör veritabanı oluşturuluyor... (İlk seferde biraz zaman alabilir)"):
+            vector_store = create_vector_store(documents)
         
         if vector_store:
             st.success("✅ Sistem hazır! Sorularınızı sorabilirsiniz.")
