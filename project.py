@@ -114,7 +114,7 @@ api_key = st.sidebar.text_input("Google API Anahtarınızı Girin:", type="passw
 
 if api_key:
     # Veriyi yükle ve işle
-    FILE_PATH = 'nba_fantasy_dataset.txt'
+    FILE_PATH = 'nba_fantasy_dataset.csv'
     
     result = preprocess_nba_data(FILE_PATH)
     if result and len(result) == 3:
@@ -186,7 +186,7 @@ if api_key:
             st.error("Vektör veritabanı oluşturulamadı.")
     else:
         st.error("❌ Veri dosyası yüklenemedi veya işlenemedi.")
-        st.info("💡 'nba_fantasy_dataset.txt' dosyasının proje klasöründe olduğundan emin olun.")
+        st.info("💡 'nba_fantasy_dataset.csv' dosyasının proje klasöründe olduğundan emin olun.")
 else:
     st.sidebar.warning("⚠️ Lütfen başlamak için Google API anahtarınızı girin.")
     st.info("👈 Sol taraftaki alana API anahtarınızı girin.")
