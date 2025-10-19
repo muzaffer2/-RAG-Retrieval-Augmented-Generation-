@@ -2,7 +2,6 @@
 
 [![Streamlit App](https://img.shields.io/badge/Streamlit-Live%20Demo-FF4B4B?style=for-the-badge&logo=streamlit)](https://rag-retrieval-augmented-generation-zhp2pyuybghd7jfyrpwrjs.streamlit.app/)
 [![Python](https://img.shields.io/badge/Python-3.8+-blue?style=for-the-badge&logo=python)](https://www.python.org/)
-[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
 **Akbank GenAI Bootcamp** için geliştirilmiş, NBA oyuncu istatistiklerini analiz eden akıllı sohbet robotu.
 
@@ -49,7 +48,7 @@ RAG tabanlı chatbot ile kullanıcılar, doğal dilde sorular sorarak anında de
 ## 🛠 Teknolojiler
 
 ### Core Technologies
-- **LLM**: Google Gemini 1.5 Flash
+- **LLM**: Google Gemini 2.5 Pro
 - **Framework**: LangChain
 - **Vector Database**: FAISS
 - **Embeddings**: HuggingFace Sentence Transformers
@@ -152,7 +151,7 @@ Metin kutusuna sorunuzu yazın. Örnek sorular:
          │
          ▼
 ┌─────────────────────────────┐
-│  Gemini 1.5 Flash           │
+│  Gemini 2.5 Pro             │
 │  Cevap Üretimi              │
 └────────┬────────────────────┘
          │
@@ -210,13 +209,10 @@ Jayson Tatum;BOS;2024-01-15;LAL;36;32;8;5;2;1;0.485
 
 ### Ekran Görüntüleri
 
-#### Ana Ekran
-![Ana Ekran](https://via.placeholder.com/800x400?text=NBA+Fantezi+Asistani+Ana+Ekran)
-
 #### Soru-Cevap Örneği
-![Soru Cevap](https://via.placeholder.com/800x400?text=Soru+Cevap+Ornegi)
+![Ana Ekran](C:\Users\ASUS\Desktop\Vscode\RAG_Chatbot\Kayıt 2025-10-19 164532.mp4)
 
----
+
 
 ## 🔧 Gelişmiş Ayarlar
 
@@ -232,7 +228,7 @@ embeddings = HuggingFaceEmbeddings(
 ### LLM Parametrelerini Ayarlama
 ```python
 model = ChatGoogleGenerativeAI(
-    model="gemini-1.5-flash-latest", 
+    model="gemini-2.5-flash", 
     temperature=0.1,  # 0-1 arası (düşük = daha tutarlı)
     google_api_key=api_key
 )
@@ -279,12 +275,6 @@ Katkılarınızı bekliyoruz! Lütfen şu adımları izleyin:
 
 ---
 
-## 📝 Lisans
-
-Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICENSE) dosyasına bakın.
-
----
-
 ## 👨‍💻 Geliştirici
 
 **Muzaffer**
@@ -309,7 +299,7 @@ Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICE
 - [LangChain Documentation](https://python.langchain.com/)
 - [FAISS Documentation](https://faiss.ai/)
 - [Streamlit Documentation](https://docs.streamlit.io/)
-- [RAG Nedir?](https://research.ibm.com/blog/retrieval-augmented-generation-RAG)
+- [RAG Nedir?](https://huggingface.co/blog/ngxson/make-your-own-rag)
 
 ---
 
