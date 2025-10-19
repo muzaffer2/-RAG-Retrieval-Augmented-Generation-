@@ -277,7 +277,7 @@ Katkılarınızı bekliyoruz! Lütfen şu adımları izleyin:
 
 ## 👨‍💻 Geliştirici
 
-**Muzaffer**
+**Muzaffer Kaya**
 - GitHub: [@muzaffer2](https://github.com/muzaffer2)
 - Proje: [RAG-Retrieval-Augmented-Generation](https://github.com/muzaffer2/RAG-Retrieval-Augmented-Generation)
 
