@@ -58,7 +58,7 @@ RAG tabanlı chatbot ile kullanıcılar, doğal dilde sorular sorarak anında de
 
 ### Model Detayları
 - **Embedding Model**: `paraphrase-multilingual-MiniLM-L12-v2` (Türkçe destekli)
-- **LLM Model**: `gemini-1.5-flash-latest`
+- **LLM Model**: `gemini-2.5-pro`
 - **Vector Store**: FAISS (Facebook AI Similarity Search)
 
 ---
@@ -206,7 +206,7 @@ Jayson Tatum;BOS;2024-01-15;LAL;36;32;8;5;2;1;0.485
 ## 🎥 Demo
 
 ### Live Demo
-👉 [Uygulamayı Deneyin](https://rag-retrieval-augmented-generation-zhp2pyuybghd7jfyrpwrjs.streamlit.app/)
+👉 [Uygulamayı Deneyin](https://rag-retrieval-augmented-generation-ucck2pfxzvxtytiikvmtm3.streamlit.app/)
 
 ### Ekran Görüntüleri
 

@@ -151,8 +151,8 @@ if api_key:
                 if user_question:
                     with st.spinner("Cevap aranıyor..."):
                         try:
-                            # Daha fazla belge getir (k=5)
-                            docs = vector_store.similarity_search(user_question, k=5)
+                            # Daha fazla belge getir (k=20)
+                            docs = vector_store.similarity_search(user_question, k=20)
                             
                             # Debug: Bulunan belgeleri göster
                             st.info(f"📊 {len(docs)} ilgili kayıt bulundu")
