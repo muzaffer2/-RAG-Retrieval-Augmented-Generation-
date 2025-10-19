@@ -10,7 +10,7 @@ import os
 # --- Veri İşleme Fonksiyonu ---
 def preprocess_nba_data(file_path):
     try:
-        df = pd.read_csv(file_path, delimiter=';')
+        df = pd.read_csv(file_path, delimiter='\t')
     except FileNotFoundError:
         st.error(f"Hata: '{file_path}' dosyası bulunamadı. Lütfen dosyanın doğru yolda olduğundan emin olun.")
         return None, None
