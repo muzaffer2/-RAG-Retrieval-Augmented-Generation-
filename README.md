@@ -99,7 +99,7 @@ Uygulama otomatik olarak tarayıcınızda `http://localhost:8501` adresinde aç�
 
 ---
 
-## 🚀 Kullanım
+## 🚀 Kullanım (Dark Mode Kullanmanız Önerilir)
 
 ### 1. API Key Girişi
 Sol taraftaki sidebar'dan Google API anahtarınızı girin.
