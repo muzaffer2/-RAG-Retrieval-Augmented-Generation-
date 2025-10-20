@@ -210,7 +210,7 @@ Jayson Tatum;BOS;2024-01-15;LAL;36;32;8;5;2;1;0.485
 ### Ekran Görüntüleri
 
 #### Soru-Cevap Örneği
-![Ana Ekran](Örnek Soru-Cevap.png)
+![Ana Ekran](https://github.com/muzaffer2/RAG-Retrieval-Augmented-Generation/blob/c823bac4e2e0eb61667ac7ab1236482cf0258c4c/%C3%96rnek%20Soru-Cevap.png)
 
 
 
