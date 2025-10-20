@@ -210,7 +210,7 @@ Jayson Tatum;BOS;2024-01-15;LAL;36;32;8;5;2;1;0.485
 ### Ekran Görüntüleri
 
 #### Soru-Cevap Örneği
-![Ana Ekran](C:\Users\ASUS\Desktop\Vscode\RAG_Chatbot\Kayıt 2025-10-19 164532.mp4)
+![Ana Ekran](Örnek Soru-Cevap.png)
 
 
 
